@@ -1,8 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://b1au0lmhu0we6"]
+[gd_scene load_steps=17 format=3 uid="uid://b1au0lmhu0we6"]
 
 [ext_resource type="Script" path="res://EarthSystem.gd" id="1_je5os"]
 [ext_resource type="Shader" uid="uid://c32vhdg7cweds" path="res://Earth.tres" id="2_kr7or"]
+[ext_resource type="Script" path="res://Moon.gd" id="5_4821q"]
 [ext_resource type="Texture2D" uid="uid://ck38u02jdraur" path="res://Textures/8k_stars_milky_way.png" id="5_fe05n"]
+[ext_resource type="Texture2D" uid="uid://1y8iconks0c1" path="res://Textures/8k_moon.png" id="5_ll7dm"]
 [ext_resource type="Script" path="res://Sky.gd" id="6_hktvb"]
 
 [sub_resource type="GDScript" id="GDScript_u7aao"]
@@ -42,6 +44,14 @@ material = SubResource("ShaderMaterial_xkd83")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_0b4r2"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6tuvw"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 5.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_ljwos"]
+material = SubResource("StandardMaterial3D_6tuvw")
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jrbiv"]
 transparency = 1
 cull_mode = 1
@@ -50,6 +60,12 @@ emission_enabled = true
 emission_texture = ExtResource("5_fe05n")
 
 [sub_resource type="SphereMesh" id="SphereMesh_hr8rq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ggy7"]
+albedo_texture = ExtResource("5_ll7dm")
+
+[sub_resource type="SphereMesh" id="SphereMesh_k0y7j"]
+material = SubResource("StandardMaterial3D_4ggy7")
 
 [node name="Node3D" type="Node3D"]
 
@@ -77,16 +93,35 @@ shape = SubResource("SphereShape3D_0b4r2")
 [node name="Sky" type="Node3D" parent="EarthSystem/Earth"]
 script = ExtResource("6_hktvb")
 
-[node name="DirectionalLight" type="OmniLight3D" parent="EarthSystem/Earth/Sky"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.50927, 0, 0.0205183)
+[node name="Sun" type="OmniLight3D" parent="EarthSystem/Earth/Sky"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 light_energy = 5.0
+light_indirect_energy = 0.0
 shadow_enabled = true
 distance_fade_enabled = true
 
-[node name="Sky" type="StaticBody3D" parent="EarthSystem/Earth/Sky"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Sun"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ljwos")
+skeleton = NodePath("../..")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Sky"]
+[node name="Sky" type="MeshInstance3D" parent="EarthSystem/Earth/Sky"]
 transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_jrbiv")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_hr8rq")
+skeleton = NodePath("")
+
+[node name="Moon" type="Node3D" parent="EarthSystem/Earth/Sky"]
+script = ExtResource("5_4821q")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Earth/Sky/Moon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
+light_energy = 0.05
+light_indirect_energy = 0.2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Moon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
+mesh = SubResource("SphereMesh_k0y7j")
+skeleton = NodePath("")
