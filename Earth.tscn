@@ -1,0 +1,92 @@
+[gd_scene load_steps=11 format=3 uid="uid://b1au0lmhu0we6"]
+
+[ext_resource type="Script" path="res://EarthSystem.gd" id="1_je5os"]
+[ext_resource type="Shader" uid="uid://c32vhdg7cweds" path="res://Earth.tres" id="2_kr7or"]
+[ext_resource type="Texture2D" uid="uid://ck38u02jdraur" path="res://Textures/8k_stars_milky_way.png" id="5_fe05n"]
+[ext_resource type="Script" path="res://Sky.gd" id="6_hktvb"]
+
+[sub_resource type="GDScript" id="GDScript_u7aao"]
+script/source = "extends Camera3D
+
+var dZ = 0
+#var dZr = 0
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	if Input.is_action_just_pressed(\"mouseWheelUp\"):
+		dZ += 1
+	if Input.is_action_just_pressed(\"mouseWheelDown\"):
+		dZ -= 1
+	#if Input.is_action_pressed(\"Q\"):
+		#dZr -= 1
+	#if Input.is_action_pressed(\"E\"):
+		#dZr += 1
+	if 2.8 < position.z + dZ * delta && position.z + dZ * delta < 10:
+		translate(Vector3(0, 0, dZ * delta))
+	#rotate_z(dZr * delta * 0.2)
+	dZ *= 0.95
+	#dZr *= 0.95
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xkd83"]
+render_priority = 0
+shader = ExtResource("2_kr7or")
+
+[sub_resource type="SphereMesh" id="SphereMesh_vlfmb"]
+material = SubResource("ShaderMaterial_xkd83")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0b4r2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jrbiv"]
+transparency = 1
+cull_mode = 1
+albedo_texture = ExtResource("5_fe05n")
+emission_enabled = true
+emission_texture = ExtResource("5_fe05n")
+
+[sub_resource type="SphereMesh" id="SphereMesh_hr8rq"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+current = true
+script = SubResource("GDScript_u7aao")
+
+[node name="EarthSystem" type="Node3D" parent="."]
+script = ExtResource("1_je5os")
+
+[node name="Earth" type="StaticBody3D" parent="EarthSystem"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth"]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+mesh = SubResource("SphereMesh_vlfmb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EarthSystem/Earth"]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+visible = false
+shape = SubResource("SphereShape3D_0b4r2")
+
+[node name="Sky" type="Node3D" parent="EarthSystem/Earth"]
+script = ExtResource("6_hktvb")
+
+[node name="DirectionalLight" type="OmniLight3D" parent="EarthSystem/Earth/Sky"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.50927, 0, 0.0205183)
+light_energy = 5.0
+shadow_enabled = true
+distance_fade_enabled = true
+
+[node name="Sky" type="StaticBody3D" parent="EarthSystem/Earth/Sky"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Sky"]
+transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_jrbiv")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_hr8rq")
