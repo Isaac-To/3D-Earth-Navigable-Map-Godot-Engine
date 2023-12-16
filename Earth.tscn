@@ -1,53 +1,31 @@
-[gd_scene load_steps=17 format=3 uid="uid://b1au0lmhu0we6"]
+[gd_scene load_steps=23 format=3 uid="uid://b1au0lmhu0we6"]
 
 [ext_resource type="Script" path="res://EarthSystem.gd" id="1_je5os"]
+[ext_resource type="Script" path="res://CameraDistance.gd" id="1_knqmy"]
+[ext_resource type="Shader" uid="uid://dp18o50m0whul" path="res://Clouds.tres" id="2_0uww1"]
+[ext_resource type="Script" path="res://CameraAngle.gd" id="2_7jv64"]
 [ext_resource type="Shader" uid="uid://c32vhdg7cweds" path="res://Earth.tres" id="2_kr7or"]
+[ext_resource type="Script" path="res://Clouds.gd" id="3_un4ub"]
 [ext_resource type="Script" path="res://Moon.gd" id="5_4821q"]
 [ext_resource type="Texture2D" uid="uid://ck38u02jdraur" path="res://Textures/8k_stars_milky_way.png" id="5_fe05n"]
 [ext_resource type="Texture2D" uid="uid://1y8iconks0c1" path="res://Textures/8k_moon.png" id="5_ll7dm"]
 [ext_resource type="Script" path="res://Sky.gd" id="6_hktvb"]
+[ext_resource type="Script" path="res://Earth.gd" id="6_xw6bv"]
 
-[sub_resource type="GDScript" id="GDScript_u7aao"]
-script/source = "extends Camera3D
-
-var dZ = 0
-#var dZr = 0
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	if Input.is_action_just_pressed(\"mouseWheelUp\"):
-		dZ += 1
-	if Input.is_action_just_pressed(\"mouseWheelDown\"):
-		dZ -= 1
-	#if Input.is_action_pressed(\"Q\"):
-		#dZr -= 1
-	#if Input.is_action_pressed(\"E\"):
-		#dZr += 1
-	if 2.8 < position.z + dZ * delta && position.z + dZ * delta < 5:
-		translate(Vector3(0, 0, dZ * delta))
-	#rotate_z(dZr * delta * 0.2)
-	dZ *= 0.95
-	#dZr *= 0.95
-"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xkd83"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f6qey"]
 render_priority = 0
-shader = ExtResource("2_kr7or")
+shader = ExtResource("2_0uww1")
 
-[sub_resource type="SphereMesh" id="SphereMesh_vlfmb"]
-material = SubResource("ShaderMaterial_xkd83")
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_0b4r2"]
+[sub_resource type="SphereMesh" id="SphereMesh_qpaib"]
+material = SubResource("ShaderMaterial_f6qey")
+radius = 2.6
+height = 5.2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6tuvw"]
 emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_energy_multiplier = 5.0
+emission_intensity = 3000.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_ljwos"]
 material = SubResource("StandardMaterial3D_6tuvw")
@@ -57,6 +35,7 @@ transparency = 1
 cull_mode = 1
 albedo_texture = ExtResource("5_fe05n")
 emission_enabled = true
+emission_intensity = 5.0
 emission_texture = ExtResource("5_fe05n")
 
 [sub_resource type="SphereMesh" id="SphereMesh_hr8rq"]
@@ -67,61 +46,84 @@ albedo_texture = ExtResource("5_ll7dm")
 [sub_resource type="SphereMesh" id="SphereMesh_k0y7j"]
 material = SubResource("StandardMaterial3D_4ggy7")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_n81ke"]
+radius = 2.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2s7i2"]
+render_priority = 0
+shader = ExtResource("2_kr7or")
+
+[sub_resource type="SphereMesh" id="SphereMesh_vlfmb"]
+material = SubResource("ShaderMaterial_2s7i2")
+radial_segments = 128
+rings = 128
+
 [node name="Node3D" type="Node3D"]
 
-[node name="Camera" type="Node3D" parent="."]
+[node name="CameraAnchor" type="Node3D" parent="."]
 
-[node name="Camera" type="Camera3D" parent="Camera"]
+[node name="CameraDistance" type="Node3D" parent="CameraAnchor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+script = ExtResource("1_knqmy")
+
+[node name="CameraAngle" type="Camera3D" parent="CameraAnchor/CameraDistance"]
 current = true
-script = SubResource("GDScript_u7aao")
+script = ExtResource("2_7jv64")
 
 [node name="EarthSystem" type="Node3D" parent="."]
 script = ExtResource("1_je5os")
 
-[node name="Earth" type="StaticBody3D" parent="EarthSystem"]
+[node name="Clouds" type="MeshInstance3D" parent="EarthSystem"]
+mesh = SubResource("SphereMesh_qpaib")
+script = ExtResource("3_un4ub")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth"]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
-mesh = SubResource("SphereMesh_vlfmb")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="EarthSystem/Earth"]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
-visible = false
-shape = SubResource("SphereShape3D_0b4r2")
-
-[node name="Sky" type="Node3D" parent="EarthSystem/Earth"]
+[node name="Sky" type="Node3D" parent="EarthSystem"]
 script = ExtResource("6_hktvb")
 
-[node name="Sun" type="OmniLight3D" parent="EarthSystem/Earth/Sky"]
+[node name="Sun" type="OmniLight3D" parent="EarthSystem/Sky"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+light_intensity_lumens = 20.0
 light_energy = 5.0
 light_indirect_energy = 0.0
+light_size = 0.5
 shadow_enabled = true
 distance_fade_enabled = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Sun"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Sun"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 cast_shadow = 0
 mesh = SubResource("SphereMesh_ljwos")
 skeleton = NodePath("../..")
 
-[node name="Sky" type="MeshInstance3D" parent="EarthSystem/Earth/Sky"]
+[node name="Sky" type="MeshInstance3D" parent="EarthSystem/Sky"]
 transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_jrbiv")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_hr8rq")
 skeleton = NodePath("")
 
-[node name="Moon" type="Node3D" parent="EarthSystem/Earth/Sky"]
+[node name="Moon" type="Node3D" parent="EarthSystem/Sky"]
 script = ExtResource("5_4821q")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Earth/Sky/Moon"]
+[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Sky/Moon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
+visible = false
 light_energy = 0.05
 light_indirect_energy = 0.2
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth/Sky/Moon"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Moon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
 mesh = SubResource("SphereMesh_k0y7j")
 skeleton = NodePath("")
+
+[node name="Earth" type="StaticBody3D" parent="EarthSystem"]
+disable_mode = 2
+input_capture_on_drag = true
+script = ExtResource("6_xw6bv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EarthSystem/Earth"]
+shape = SubResource("SphereShape3D_n81ke")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth"]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+mesh = SubResource("SphereMesh_vlfmb")

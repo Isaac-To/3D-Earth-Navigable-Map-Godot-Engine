@@ -26,17 +26,17 @@ func _process(delta):
 		dZ += 2
 	if Input.is_action_pressed("E"):
 		dZ -= 2
-	var mousePos = get_viewport().get_mouse_position()
-	var bufferX = get_viewport().size.x / edgeBuffer
-	var bufferY = get_viewport().size.y / edgeBuffer
-	if bufferX < mousePos.x:
-		dY -= 1
-	if mousePos.x < get_viewport().size.x - bufferX:
-		dY += 1
-	if bufferX < mousePos.y:
-		dX -= 1
-	if mousePos.y < get_viewport().size.y - bufferY:
-		dX += 1
+	#var mousePos = get_viewport().get_mouse_position()
+	#var bufferX = get_viewport().size.x / edgeBuffer
+	#var bufferY = get_viewport().size.y / edgeBuffer
+	#if bufferX < mousePos.x:
+		#dY -= 1
+	#if mousePos.x < get_viewport().size.x - bufferX:
+		#dY += 1
+	#if bufferX < mousePos.y:
+		#dX -= 1
+	#if mousePos.y < get_viewport().size.y - bufferY:
+		#dX += 1
 	rotate_x(dX * delta * speed)
 	rotate_y(dY * delta * speed)
 	rotate_z(dZ * delta * speed)
