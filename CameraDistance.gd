@@ -16,7 +16,7 @@ func _process(delta):
 		#dZr -= 1
 	#if Input.is_action_pressed("E"):
 		#dZr += 1
-	if 2.55 < position.z + dZ * delta && position.z + dZ * delta < 5:
+	if 2.8 < position.z + dZ * delta && position.z + dZ * delta < 5:
 		translate(Vector3(0, 0, dZ * delta))
 	else:
 		dZ = 0

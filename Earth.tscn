@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b1au0lmhu0we6"]
+[gd_scene load_steps=25 format=3 uid="uid://b1au0lmhu0we6"]
 
 [ext_resource type="Script" path="res://EarthSystem.gd" id="1_je5os"]
 [ext_resource type="Script" path="res://CameraDistance.gd" id="1_knqmy"]
@@ -18,14 +18,15 @@ shader = ExtResource("2_0uww1")
 
 [sub_resource type="SphereMesh" id="SphereMesh_qpaib"]
 material = SubResource("ShaderMaterial_f6qey")
-radius = 2.6
-height = 5.2
+radius = 2.55
+height = 5.1
+radial_segments = 128
+rings = 128
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6tuvw"]
 emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_energy_multiplier = 5.0
-emission_intensity = 3000.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_ljwos"]
 material = SubResource("StandardMaterial3D_6tuvw")
@@ -35,7 +36,6 @@ transparency = 1
 cull_mode = 1
 albedo_texture = ExtResource("5_fe05n")
 emission_enabled = true
-emission_intensity = 5.0
 emission_texture = ExtResource("5_fe05n")
 
 [sub_resource type="SphereMesh" id="SphereMesh_hr8rq"]
@@ -49,14 +49,35 @@ material = SubResource("StandardMaterial3D_4ggy7")
 [sub_resource type="SphereShape3D" id="SphereShape3D_n81ke"]
 radius = 2.5
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2s7i2"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xa81f"]
 render_priority = 0
 shader = ExtResource("2_kr7or")
 
-[sub_resource type="SphereMesh" id="SphereMesh_vlfmb"]
-material = SubResource("ShaderMaterial_2s7i2")
-radial_segments = 128
-rings = 128
+[sub_resource type="SphereMesh" id="SphereMesh_qtd02"]
+material = SubResource("ShaderMaterial_xa81f")
+
+[sub_resource type="Environment" id="Environment_8qasf"]
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+glow_enabled = true
+glow_normalized = true
+glow_strength = 0.5
+glow_bloom = 0.1
+fog_enabled = true
+fog_light_energy = 0.53
+volumetric_fog_density = 0.02
+adjustment_enabled = true
+adjustment_contrast = 1.75
+adjustment_saturation = 1.2
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_2r1x6"]
+auto_exposure_enabled = true
+dof_blur_far_enabled = true
+auto_exposure_min_sensitivity = 250.0
 
 [node name="Node3D" type="Node3D"]
 
@@ -74,6 +95,8 @@ script = ExtResource("2_7jv64")
 script = ExtResource("1_je5os")
 
 [node name="Clouds" type="MeshInstance3D" parent="EarthSystem"]
+transparency = 0.7
+visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_qpaib")
 script = ExtResource("3_un4ub")
 
@@ -82,12 +105,9 @@ script = ExtResource("6_hktvb")
 
 [node name="Sun" type="OmniLight3D" parent="EarthSystem/Sky"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
-light_intensity_lumens = 20.0
-light_energy = 5.0
-light_indirect_energy = 0.0
-light_size = 0.5
 shadow_enabled = true
 distance_fade_enabled = true
+omni_range = 4096.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Sun"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
@@ -105,12 +125,6 @@ skeleton = NodePath("")
 [node name="Moon" type="Node3D" parent="EarthSystem/Sky"]
 script = ExtResource("5_4821q")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Sky/Moon"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
-visible = false
-light_energy = 0.05
-light_indirect_energy = 0.2
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Moon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
 mesh = SubResource("SphereMesh_k0y7j")
@@ -126,4 +140,8 @@ shape = SubResource("SphereShape3D_n81ke")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Earth"]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
-mesh = SubResource("SphereMesh_vlfmb")
+mesh = SubResource("SphereMesh_qtd02")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_8qasf")
+camera_attributes = SubResource("CameraAttributesPractical_2r1x6")

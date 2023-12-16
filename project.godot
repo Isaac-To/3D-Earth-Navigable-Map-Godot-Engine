@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 [importer_defaults]
 
 animation_library={
-"animation/fps": 60.0,
+"animation/fps": 120.0,
 "animation/trimming": true
 }
 
@@ -93,16 +93,18 @@ R={
 
 [rendering]
 
-lights_and_shadows/use_physical_light_units=true
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=5
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=5
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality.mobile=5
+shader_compiler/shader_cache/strip_debug=true
 reflections/sky_reflections/fast_filter_high_quality=true
+global_illumination/gi/use_half_resolution=true
 global_illumination/voxel_gi/quality=1
 textures/default_filters/anisotropic_filtering_level=4
 camera/depth_of_field/depth_of_field_bokeh_quality=3
+camera/depth_of_field/depth_of_field_use_jitter=true
 scaling_3d/mode=2
-scaling_3d/scale=0.8
+scaling_3d/scale=0.75
 environment/screen_space_reflection/roughness_quality=2
 environment/subsurface_scattering/subsurface_scattering_quality=2
 global_illumination/sdfgi/probe_ray_count=5

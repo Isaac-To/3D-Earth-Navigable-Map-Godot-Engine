@@ -48,7 +48,8 @@ default_input_values = [0, 0.0, 1, 0.1]
 [sub_resource type="VisualShaderNodeColorConstant" id="VisualShaderNodeColorConstant_2yfjo"]
 
 [sub_resource type="Gradient" id="Gradient_vhqwj"]
-offsets = PackedFloat32Array(0.633508, 1)
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.581152, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_tn7in"]
 
@@ -61,12 +62,13 @@ noise = SubResource("FastNoiseLite_tn7in")
 [sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_mhpl2"]
 output_port_for_preview = 0
 texture = SubResource("NoiseTexture2D_immgy")
+texture_type = 2
 
 [resource]
 code = "shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
 
-uniform sampler2D tex_frg_3;
+uniform sampler2D tex_frg_3 : hint_normal;
 
 
 
@@ -88,7 +90,7 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(36.4182, 69.7466)
+graph_offset = Vector2(-305.472, 62.5708)
 nodes/fragment/0/position = Vector2(600, 140)
 nodes/fragment/3/node = SubResource("VisualShaderNodeTexture_mhpl2")
 nodes/fragment/3/position = Vector2(240, 220)
