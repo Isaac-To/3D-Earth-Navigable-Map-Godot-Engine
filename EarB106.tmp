@@ -1,6 +1,6 @@
-[gd_scene load_steps=26 format=3 uid="uid://b1au0lmhu0we6"]
+[gd_scene load_steps=25 format=3 uid="uid://b1au0lmhu0we6"]
 
-[ext_resource type="Script" path="res://CameraAnchor.gd" id="1_0gevo"]
+[ext_resource type="Script" path="res://EarthSystem.gd" id="1_je5os"]
 [ext_resource type="Script" path="res://CameraDistance.gd" id="1_knqmy"]
 [ext_resource type="Shader" uid="uid://dp18o50m0whul" path="res://Clouds.tres" id="2_0uww1"]
 [ext_resource type="Script" path="res://CameraAngle.gd" id="2_7jv64"]
@@ -11,30 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://1y8iconks0c1" path="res://Textures/8k_moon.png" id="5_ll7dm"]
 [ext_resource type="Script" path="res://Sky.gd" id="6_hktvb"]
 [ext_resource type="Script" path="res://Earth.gd" id="6_xw6bv"]
-
-[sub_resource type="GDScript" id="GDScript_ve8u1"]
-script/source = "extends Node3D
-
-var speed = 0.25
-
-var dXr = 0
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	if Input.is_action_pressed(\"W\"):
-		dXr -= 1
-	if Input.is_action_pressed(\"S\"):
-		dXr += 1
-	if rotation.x + dXr * delta * speed > -1.2 && rotation.x + dXr * delta * speed < 1.2:
-		rotate_x(dXr * delta * speed)
-	else:
-		dXr = 0
-	dXr *= 0.95
-"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6qey"]
 render_priority = 0
@@ -64,11 +40,11 @@ emission_texture = ExtResource("5_fe05n")
 
 [sub_resource type="SphereMesh" id="SphereMesh_hr8rq"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_odjwx"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ggy7"]
 albedo_texture = ExtResource("5_ll7dm")
 
-[sub_resource type="SphereMesh" id="SphereMesh_hgqbv"]
-material = SubResource("StandardMaterial3D_odjwx")
+[sub_resource type="SphereMesh" id="SphereMesh_k0y7j"]
+material = SubResource("StandardMaterial3D_4ggy7")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_n81ke"]
 radius = 2.5
@@ -101,9 +77,11 @@ volumetric_fog_albedo = Color(0, 0, 1, 1)
 volumetric_fog_length = 1.0
 volumetric_fog_ambient_inject = 0.04
 adjustment_enabled = true
-adjustment_contrast = 1.5
+adjustment_brightness = 0.9
+adjustment_contrast = 1.78
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_2r1x6"]
+auto_exposure_enabled = true
 dof_blur_far_enabled = true
 dof_blur_near_enabled = true
 dof_blur_near_distance = 0.5
@@ -113,20 +91,17 @@ auto_exposure_min_sensitivity = 200.0
 [node name="Node3D" type="Node3D"]
 
 [node name="CameraAnchor" type="Node3D" parent="."]
-script = ExtResource("1_0gevo")
 
-[node name="CameraVert" type="Node3D" parent="CameraAnchor"]
-script = SubResource("GDScript_ve8u1")
-
-[node name="CameraDistance" type="Node3D" parent="CameraAnchor/CameraVert"]
+[node name="CameraDistance" type="Node3D" parent="CameraAnchor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 script = ExtResource("1_knqmy")
 
-[node name="CameraAngle" type="Camera3D" parent="CameraAnchor/CameraVert/CameraDistance"]
+[node name="CameraAngle" type="Camera3D" parent="CameraAnchor/CameraDistance"]
 current = true
 script = ExtResource("2_7jv64")
 
 [node name="EarthSystem" type="Node3D" parent="."]
+script = ExtResource("1_je5os")
 
 [node name="Clouds" type="MeshInstance3D" parent="EarthSystem"]
 transparency = 0.7
@@ -137,16 +112,8 @@ script = ExtResource("3_un4ub")
 [node name="Sky" type="Node3D" parent="EarthSystem"]
 script = ExtResource("6_hktvb")
 
-[node name="Sun" type="Node3D" parent="EarthSystem/Sky"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Sun"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
-cast_shadow = 0
-mesh = SubResource("SphereMesh_ljwos")
-skeleton = NodePath("../..")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Sky/Sun"]
+[node name="Sun" type="OmniLight3D" parent="EarthSystem/Sky"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
 light_energy = 3.0
 light_volumetric_fog_energy = 16.0
 light_size = 1.0
@@ -154,6 +121,12 @@ light_specular = 0.0
 shadow_enabled = true
 distance_fade_enabled = true
 omni_range = 20.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Sun"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ljwos")
+skeleton = NodePath("../..")
 
 [node name="Sky" type="MeshInstance3D" parent="EarthSystem/Sky"]
 transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 0)
@@ -167,14 +140,8 @@ script = ExtResource("5_4821q")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="EarthSystem/Sky/Moon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
-mesh = SubResource("SphereMesh_hgqbv")
+mesh = SubResource("SphereMesh_k0y7j")
 skeleton = NodePath("")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="EarthSystem/Sky/Moon"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 0)
-light_indirect_energy = 0.6
-shadow_enabled = true
-omni_range = 20.0
 
 [node name="Earth" type="StaticBody3D" parent="EarthSystem"]
 disable_mode = 2
