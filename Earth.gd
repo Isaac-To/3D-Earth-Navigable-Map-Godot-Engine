@@ -25,3 +25,16 @@ func _input_event(camera, event, position, normal, shape_idx):
 		dY += -normal.x / 2.5 * speed
 		#dZ += normal.z / 2.5 * speed
 		#print(position)
+	if Input.is_action_just_pressed("mouseLeftClick"):
+		#print(position)
+		var newPoint = MeshInstance3D.new()
+		newPoint.position = position
+		newPoint.mesh = SphereMesh.new()
+		newPoint.mesh.radius = 0.01
+		newPoint.mesh.height = 0.02
+		var material = StandardMaterial3D.new()
+		material.emission_enabled = true
+		material.emission = Color(255, 0, 0, 0)
+		material.emission_intensity = 2
+		newPoint.mesh.surface_set_material(0, material)
+		get_parent_node_3d().add_child(newPoint)
