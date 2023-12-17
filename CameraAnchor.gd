@@ -10,6 +10,10 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	if Input.is_action_just_pressed("Shift"):
+		speed *= 2
+	if Input.is_action_just_released("Shift"):
+		speed /= 2
 	if Input.is_action_pressed("A"):
 		dYr -= 1
 	if Input.is_action_pressed("D"):
